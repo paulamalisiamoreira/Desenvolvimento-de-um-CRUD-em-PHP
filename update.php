@@ -1,22 +1,16 @@
 <?php
 include 'db.php';
 
+$user = null;
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $novoNome = $_POST['novoNome'];
-    $nomeAtual = $_POST['nomeAtual'];
-
-    $sql = "UPDATE user SET name = '$novoNome' where name = '$nomeAtual'";
-
-    if($conn -> query($sql) === true){
-        echo "Novo registro adicionado com sucesso";
-    } else {
-        echo "Erro  $sql <br>" . $conn -> error;
+if(isset($_GET["id"])){
+    $id = (int)$_GET["id"];
+    $result = $conn->query("SELECT * FROM user WHERE id = '$id'");
+    if($result->num_rows > 0){
+        $user = $result->fetch_assoc();
     }
-
 }
 
-$conn -> close();
 
 
 ?>
@@ -31,13 +25,17 @@ $conn -> close();
     <title>Update</title>
 </head>
 <body>
+    <?php if ($user === null):?>
+        <p>Sem registros.</p>
+    <?php else: ?>
     <form method="POST"  action="update.php" name="novoNome">
-        <label for="nomeAtual">Digite o nome que você quer mudar:</label>
-        <input type="text" name="nomeAtual">
-        <label for="novoNome">Digite o novo nome:</label>
-        <input type="text" name="novoNome">
-        <input type="submit" value="Enviar" >
+        <label for="name">Nome</label>
+        <input type="text" name="name" value="<?php echo $user['name']?>">
+        <label for="email">Email</label>
+        <input type="text" name="email" value="<?php echo $user['email']?>">
+        <!-- continuar .... -->
     </form>
+    <?php endif ?>   
 
 </body>
 </html>
